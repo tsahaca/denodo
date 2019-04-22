@@ -1,0 +1,12 @@
+Flatten the comma separated values in a field into multiple rows
+
+1. WITH t1 as (SELECT userid_0, functionpoints_0 from failstation_users), t2 as (SELECT userid_0,split(',',functionpoints_0) sp From t1)
+   SELECT * FROM FLATTEN t2 AS t3 ( t3.sp) 
+2. Decode value based on substring occurreence
+
+select userid_0 as UserId, clientid_0 as ClientId, firstname_0 as FirstName, lastname_0 as LastName, accountactive_0 as Status, 'Super User' as Role from failstation_users where INSTR(functionpoints_0, 'User Administration') > 0
+union 
+select userid_0 as UserId, clientid_0 as ClientId, firstname_0 as FirstName, lastname_0 as LastName, accountactive_0 as Status, 'Read Only' as Role from failstation_users where INSTR(functionpoints_0, 'Workstation Read Only') > 0
+union 
+select userid_0 as UserId, clientid_0 as ClientId, firstname_0 as FirstName, lastname_0 as LastName, accountactive_0 as Status, 'Ops User' as Role from failstation_users where ( (INSTR(functionpoints_0, 'User Administration')  < 0 ) and  (INSTR(functionpoints_0, 'Workstation Read Only') < 0))
+order by Role DESC
